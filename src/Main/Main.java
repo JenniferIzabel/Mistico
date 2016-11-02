@@ -7,7 +7,7 @@ package Main;
 
 /**
  *
- * @author jennifer
+ * @author jennifer e rafael
  */
 public class Main {
 
@@ -15,7 +15,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        GUIs.GUIMistico guiPrincipal = new GUIs.GUIMistico(1,2);
     }
     
 }
