@@ -8,15 +8,14 @@ package Entidades;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -35,25 +34,22 @@ public class Jogador implements Serializable {
     @Column(name = "idJogador")
     private Integer idJogador;
     @Basic(optional = false)
-    @Column(name = "nome")
-    private String nome;
+    @Column(name = "usuario")
+    private String usuario;
     @Basic(optional = false)
-    @Column(name = "idade")
-    private int idade;
+    @Column(name = "senha")
+    private String senha;
     @Basic(optional = false)
-    @Column(name = "sexo")
-    private String sexo;
+    @Column(name = "qtdVitorias")
+    private int qtdVitorias;
     @Basic(optional = false)
-    @Column(name = "anosExperiencia")
-    private int anosExperiencia;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "jogador")
-    private List<Tropa> tropaList;
-    @JoinColumn(name = "Equipe_idEquipe", referencedColumnName = "idEquipe")
-    @ManyToOne
-    private Equipe equipe;
-    @JoinColumn(name = "HistoricoJogador_idHistoricoJogador", referencedColumnName = "idHistoricoJogador")
-    @ManyToOne(optional = false)
-    private HistoricoJogador historicoJogador;
+    @Column(name = "qtdderrotas")
+    private int qtdderrotas;
+    @JoinTable(name = "Tropa", joinColumns = {
+        @JoinColumn(name = "Jogador_idJogador", referencedColumnName = "idJogador")}, inverseJoinColumns = {
+        @JoinColumn(name = "Personagem_idPersonagem", referencedColumnName = "idPersonagem")})
+    @ManyToMany
+    private List<Personagem> personagemList;
 
     public Jogador() {
     }
@@ -62,12 +58,12 @@ public class Jogador implements Serializable {
         this.idJogador = idJogador;
     }
 
-    public Jogador(Integer idJogador, String nome, int idade, String sexo, int anosExperiencia) {
+    public Jogador(Integer idJogador, String usuario, String senha, int qtdVitorias, int qtdderrotas) {
         this.idJogador = idJogador;
-        this.nome = nome;
-        this.idade = idade;
-        this.sexo = sexo;
-        this.anosExperiencia = anosExperiencia;
+        this.usuario = usuario;
+        this.senha = senha;
+        this.qtdVitorias = qtdVitorias;
+        this.qtdderrotas = qtdderrotas;
     }
 
     public Integer getIdJogador() {
@@ -78,60 +74,44 @@ public class Jogador implements Serializable {
         this.idJogador = idJogador;
     }
 
-    public String getNome() {
-        return nome;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
-    public int getIdade() {
-        return idade;
+    public String getSenha() {
+        return senha;
     }
 
-    public void setIdade(int idade) {
-        this.idade = idade;
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
-    public String getSexo() {
-        return sexo;
+    public int getQtdVitorias() {
+        return qtdVitorias;
     }
 
-    public void setSexo(String sexo) {
-        this.sexo = sexo;
+    public void setQtdVitorias(int qtdVitorias) {
+        this.qtdVitorias = qtdVitorias;
     }
 
-    public int getAnosExperiencia() {
-        return anosExperiencia;
+    public int getQtdderrotas() {
+        return qtdderrotas;
     }
 
-    public void setAnosExperiencia(int anosExperiencia) {
-        this.anosExperiencia = anosExperiencia;
+    public void setQtdderrotas(int qtdderrotas) {
+        this.qtdderrotas = qtdderrotas;
     }
 
-    public List<Tropa> getTropaList() {
-        return tropaList;
+    public List<Personagem> getPersonagemList() {
+        return personagemList;
     }
 
-    public void setTropaList(List<Tropa> tropaList) {
-        this.tropaList = tropaList;
-    }
-
-    public Equipe getEquipe() {
-        return equipe;
-    }
-
-    public void setEquipe(Equipe equipe) {
-        this.equipe = equipe;
-    }
-
-    public HistoricoJogador getHistoricoJogador() {
-        return historicoJogador;
-    }
-
-    public void setHistoricoJogador(HistoricoJogador historicoJogador) {
-        this.historicoJogador = historicoJogador;
+    public void setPersonagemList(List<Personagem> personagemList) {
+        this.personagemList = personagemList;
     }
 
     @Override
