@@ -5,6 +5,10 @@
  */
 package Main;
 
+import GUIs.GUIInicioLogin;
+import GUIs.GUIPrincipal;
+import GUIs.Tabuleiro;
+
 /**
  *
  * @author jennifer e rafael
@@ -15,7 +19,9 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        GUIs.GUIMistico guiPrincipal = new GUIs.GUIMistico(1,2);
+//        GUIPrincipal gui = new GUIPrincipal(1, 2, 12, 16);
+
+          GUIInicioLogin guiInicioLogin = new GUIInicioLogin();
     }
     
 }

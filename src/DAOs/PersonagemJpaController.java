@@ -12,13 +12,10 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import Entidades.Distancia;
+import Entidades.Jogador;
 import Entidades.Personagem;
-import Entidades.PersonagemPK;
-import Entidades.Tropa;
 import java.util.ArrayList;
 import java.util.List;
-import Entidades.TipoAtaque;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -38,53 +35,27 @@ public class PersonagemJpaController implements Serializable {
     }
 
     public void create(Personagem personagem) throws PreexistingEntityException, Exception {
-        if (personagem.getPersonagemPK() == null) {
-            personagem.setPersonagemPK(new PersonagemPK());
+        if (personagem.getJogadorList() == null) {
+            personagem.setJogadorList(new ArrayList<Jogador>());
         }
-        if (personagem.getTropaList() == null) {
-            personagem.setTropaList(new ArrayList<Tropa>());
-        }
-        if (personagem.getTipoAtaqueList() == null) {
-            personagem.setTipoAtaqueList(new ArrayList<TipoAtaque>());
-        }
-        personagem.getPersonagemPK().setDistanciaidDistancia(personagem.getDistancia().getIdDistancia());
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Distancia distancia = personagem.getDistancia();
-            if (distancia != null) {
-                distancia = em.getReference(distancia.getClass(), distancia.getIdDistancia());
-                personagem.setDistancia(distancia);
+            List<Jogador> attachedJogadorList = new ArrayList<Jogador>();
+            for (Jogador jogadorListJogadorToAttach : personagem.getJogadorList()) {
+                jogadorListJogadorToAttach = em.getReference(jogadorListJogadorToAttach.getClass(), jogadorListJogadorToAttach.getIdJogador());
+                attachedJogadorList.add(jogadorListJogadorToAttach);
             }
-            List<Tropa> attachedTropaList = new ArrayList<Tropa>();
-            for (Tropa tropaListTropaToAttach : personagem.getTropaList()) {
-                tropaListTropaToAttach = em.getReference(tropaListTropaToAttach.getClass(), tropaListTropaToAttach.getTropaPK());
-                attachedTropaList.add(tropaListTropaToAttach);
-            }
-            personagem.setTropaList(attachedTropaList);
-            List<TipoAtaque> attachedTipoAtaqueList = new ArrayList<TipoAtaque>();
-            for (TipoAtaque tipoAtaqueListTipoAtaqueToAttach : personagem.getTipoAtaqueList()) {
-                tipoAtaqueListTipoAtaqueToAttach = em.getReference(tipoAtaqueListTipoAtaqueToAttach.getClass(), tipoAtaqueListTipoAtaqueToAttach.getIdTipoAtaque());
-                attachedTipoAtaqueList.add(tipoAtaqueListTipoAtaqueToAttach);
-            }
-            personagem.setTipoAtaqueList(attachedTipoAtaqueList);
+            personagem.setJogadorList(attachedJogadorList);
             em.persist(personagem);
-            if (distancia != null) {
-                distancia.getPersonagemList().add(personagem);
-                distancia = em.merge(distancia);
-            }
-            for (Tropa tropaListTropa : personagem.getTropaList()) {
-                tropaListTropa.getPersonagemList().add(personagem);
-                tropaListTropa = em.merge(tropaListTropa);
-            }
-            for (TipoAtaque tipoAtaqueListTipoAtaque : personagem.getTipoAtaqueList()) {
-                tipoAtaqueListTipoAtaque.getPersonagemList().add(personagem);
-                tipoAtaqueListTipoAtaque = em.merge(tipoAtaqueListTipoAtaque);
+            for (Jogador jogadorListJogador : personagem.getJogadorList()) {
+                jogadorListJogador.getPersonagemList().add(personagem);
+                jogadorListJogador = em.merge(jogadorListJogador);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findPersonagem(personagem.getPersonagemPK()) != null) {
+            if (findPersonagem(personagem.getIdPersonagem()) != null) {
                 throw new PreexistingEntityException("Personagem " + personagem + " already exists.", ex);
             }
             throw ex;
@@ -96,74 +67,38 @@ public class PersonagemJpaController implements Serializable {
     }
 
     public void edit(Personagem personagem) throws NonexistentEntityException, Exception {
-        personagem.getPersonagemPK().setDistanciaidDistancia(personagem.getDistancia().getIdDistancia());
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Personagem persistentPersonagem = em.find(Personagem.class, personagem.getPersonagemPK());
-            Distancia distanciaOld = persistentPersonagem.getDistancia();
-            Distancia distanciaNew = personagem.getDistancia();
-            List<Tropa> tropaListOld = persistentPersonagem.getTropaList();
-            List<Tropa> tropaListNew = personagem.getTropaList();
-            List<TipoAtaque> tipoAtaqueListOld = persistentPersonagem.getTipoAtaqueList();
-            List<TipoAtaque> tipoAtaqueListNew = personagem.getTipoAtaqueList();
-            if (distanciaNew != null) {
-                distanciaNew = em.getReference(distanciaNew.getClass(), distanciaNew.getIdDistancia());
-                personagem.setDistancia(distanciaNew);
+            Personagem persistentPersonagem = em.find(Personagem.class, personagem.getIdPersonagem());
+            List<Jogador> jogadorListOld = persistentPersonagem.getJogadorList();
+            List<Jogador> jogadorListNew = personagem.getJogadorList();
+            List<Jogador> attachedJogadorListNew = new ArrayList<Jogador>();
+            for (Jogador jogadorListNewJogadorToAttach : jogadorListNew) {
+                jogadorListNewJogadorToAttach = em.getReference(jogadorListNewJogadorToAttach.getClass(), jogadorListNewJogadorToAttach.getIdJogador());
+                attachedJogadorListNew.add(jogadorListNewJogadorToAttach);
             }
-            List<Tropa> attachedTropaListNew = new ArrayList<Tropa>();
-            for (Tropa tropaListNewTropaToAttach : tropaListNew) {
-                tropaListNewTropaToAttach = em.getReference(tropaListNewTropaToAttach.getClass(), tropaListNewTropaToAttach.getTropaPK());
-                attachedTropaListNew.add(tropaListNewTropaToAttach);
-            }
-            tropaListNew = attachedTropaListNew;
-            personagem.setTropaList(tropaListNew);
-            List<TipoAtaque> attachedTipoAtaqueListNew = new ArrayList<TipoAtaque>();
-            for (TipoAtaque tipoAtaqueListNewTipoAtaqueToAttach : tipoAtaqueListNew) {
-                tipoAtaqueListNewTipoAtaqueToAttach = em.getReference(tipoAtaqueListNewTipoAtaqueToAttach.getClass(), tipoAtaqueListNewTipoAtaqueToAttach.getIdTipoAtaque());
-                attachedTipoAtaqueListNew.add(tipoAtaqueListNewTipoAtaqueToAttach);
-            }
-            tipoAtaqueListNew = attachedTipoAtaqueListNew;
-            personagem.setTipoAtaqueList(tipoAtaqueListNew);
+            jogadorListNew = attachedJogadorListNew;
+            personagem.setJogadorList(jogadorListNew);
             personagem = em.merge(personagem);
-            if (distanciaOld != null && !distanciaOld.equals(distanciaNew)) {
-                distanciaOld.getPersonagemList().remove(personagem);
-                distanciaOld = em.merge(distanciaOld);
-            }
-            if (distanciaNew != null && !distanciaNew.equals(distanciaOld)) {
-                distanciaNew.getPersonagemList().add(personagem);
-                distanciaNew = em.merge(distanciaNew);
-            }
-            for (Tropa tropaListOldTropa : tropaListOld) {
-                if (!tropaListNew.contains(tropaListOldTropa)) {
-                    tropaListOldTropa.getPersonagemList().remove(personagem);
-                    tropaListOldTropa = em.merge(tropaListOldTropa);
+            for (Jogador jogadorListOldJogador : jogadorListOld) {
+                if (!jogadorListNew.contains(jogadorListOldJogador)) {
+                    jogadorListOldJogador.getPersonagemList().remove(personagem);
+                    jogadorListOldJogador = em.merge(jogadorListOldJogador);
                 }
             }
-            for (Tropa tropaListNewTropa : tropaListNew) {
-                if (!tropaListOld.contains(tropaListNewTropa)) {
-                    tropaListNewTropa.getPersonagemList().add(personagem);
-                    tropaListNewTropa = em.merge(tropaListNewTropa);
-                }
-            }
-            for (TipoAtaque tipoAtaqueListOldTipoAtaque : tipoAtaqueListOld) {
-                if (!tipoAtaqueListNew.contains(tipoAtaqueListOldTipoAtaque)) {
-                    tipoAtaqueListOldTipoAtaque.getPersonagemList().remove(personagem);
-                    tipoAtaqueListOldTipoAtaque = em.merge(tipoAtaqueListOldTipoAtaque);
-                }
-            }
-            for (TipoAtaque tipoAtaqueListNewTipoAtaque : tipoAtaqueListNew) {
-                if (!tipoAtaqueListOld.contains(tipoAtaqueListNewTipoAtaque)) {
-                    tipoAtaqueListNewTipoAtaque.getPersonagemList().add(personagem);
-                    tipoAtaqueListNewTipoAtaque = em.merge(tipoAtaqueListNewTipoAtaque);
+            for (Jogador jogadorListNewJogador : jogadorListNew) {
+                if (!jogadorListOld.contains(jogadorListNewJogador)) {
+                    jogadorListNewJogador.getPersonagemList().add(personagem);
+                    jogadorListNewJogador = em.merge(jogadorListNewJogador);
                 }
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                PersonagemPK id = personagem.getPersonagemPK();
+                Integer id = personagem.getIdPersonagem();
                 if (findPersonagem(id) == null) {
                     throw new NonexistentEntityException("The personagem with id " + id + " no longer exists.");
                 }
@@ -176,7 +111,7 @@ public class PersonagemJpaController implements Serializable {
         }
     }
 
-    public void destroy(PersonagemPK id) throws NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -184,24 +119,14 @@ public class PersonagemJpaController implements Serializable {
             Personagem personagem;
             try {
                 personagem = em.getReference(Personagem.class, id);
-                personagem.getPersonagemPK();
+                personagem.getIdPersonagem();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The personagem with id " + id + " no longer exists.", enfe);
             }
-            Distancia distancia = personagem.getDistancia();
-            if (distancia != null) {
-                distancia.getPersonagemList().remove(personagem);
-                distancia = em.merge(distancia);
-            }
-            List<Tropa> tropaList = personagem.getTropaList();
-            for (Tropa tropaListTropa : tropaList) {
-                tropaListTropa.getPersonagemList().remove(personagem);
-                tropaListTropa = em.merge(tropaListTropa);
-            }
-            List<TipoAtaque> tipoAtaqueList = personagem.getTipoAtaqueList();
-            for (TipoAtaque tipoAtaqueListTipoAtaque : tipoAtaqueList) {
-                tipoAtaqueListTipoAtaque.getPersonagemList().remove(personagem);
-                tipoAtaqueListTipoAtaque = em.merge(tipoAtaqueListTipoAtaque);
+            List<Jogador> jogadorList = personagem.getJogadorList();
+            for (Jogador jogadorListJogador : jogadorList) {
+                jogadorListJogador.getPersonagemList().remove(personagem);
+                jogadorListJogador = em.merge(jogadorListJogador);
             }
             em.remove(personagem);
             em.getTransaction().commit();
@@ -236,7 +161,7 @@ public class PersonagemJpaController implements Serializable {
         }
     }
 
-    public Personagem findPersonagem(PersonagemPK id) {
+    public Personagem findPersonagem(Integer id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(Personagem.class, id);

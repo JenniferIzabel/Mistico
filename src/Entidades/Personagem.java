@@ -9,13 +9,10 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
+import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -31,11 +28,16 @@ import javax.persistence.Table;
 public class Personagem implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    protected PersonagemPK personagemPK;
+    @Id
+    @Basic(optional = false)
+    @Column(name = "idPersonagem")
+    private Integer idPersonagem;
     @Basic(optional = false)
     @Column(name = "nome")
     private String nome;
+    @Basic(optional = false)
+    @Column(name = "abreviacao")
+    private String abreviacao;
     @Basic(optional = false)
     @Column(name = "ataque")
     private int ataque;
@@ -46,49 +48,43 @@ public class Personagem implements Serializable {
     @Column(name = "hp")
     private int hp;
     @Basic(optional = false)
+    @Column(name = "distMov")
+    private int distMov;
+    @Basic(optional = false)
+    @Column(name = "distAtaq")
+    private int distAtaq;
+    @Basic(optional = false)
     @Lob
     @Column(name = "descricao")
     private String descricao;
-    @JoinTable(name = "Tropa_has_Personagem", joinColumns = {
-        @JoinColumn(name = "Personagem_idPersonagem", referencedColumnName = "idPersonagem")}, inverseJoinColumns = {
-        @JoinColumn(name = "Tropa_idTropa", referencedColumnName = "idTropa")})
-    @ManyToMany
-    private List<Tropa> tropaList;
-    @JoinTable(name = "Personagem_has_TipoAtaque", joinColumns = {
-        @JoinColumn(name = "Personagem_idPersonagem", referencedColumnName = "idPersonagem")}, inverseJoinColumns = {
-        @JoinColumn(name = "TipoAtaque_idTipoAtaque", referencedColumnName = "idTipoAtaque")})
-    @ManyToMany
-    private List<TipoAtaque> tipoAtaqueList;
-    @JoinColumn(name = "Distancia_idDistancia", referencedColumnName = "idDistancia", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
-    private Distancia distancia;
+    @ManyToMany(mappedBy = "personagemList")
+    private List<Jogador> jogadorList;
 
     public Personagem() {
     }
 
-    public Personagem(PersonagemPK personagemPK) {
-        this.personagemPK = personagemPK;
+    public Personagem(Integer idPersonagem) {
+        this.idPersonagem = idPersonagem;
     }
 
-    public Personagem(PersonagemPK personagemPK, String nome, int ataque, int defesa, int hp, String descricao) {
-        this.personagemPK = personagemPK;
+    public Personagem(Integer idPersonagem, String nome, String abreviacao, int ataque, int defesa, int hp, int distMov, int distAtaq, String descricao) {
+        this.idPersonagem = idPersonagem;
         this.nome = nome;
+        this.abreviacao = abreviacao;
         this.ataque = ataque;
         this.defesa = defesa;
         this.hp = hp;
+        this.distMov = distMov;
+        this.distAtaq = distAtaq;
         this.descricao = descricao;
     }
 
-    public Personagem(int idPersonagem, int distanciaidDistancia) {
-        this.personagemPK = new PersonagemPK(idPersonagem, distanciaidDistancia);
+    public Integer getIdPersonagem() {
+        return idPersonagem;
     }
 
-    public PersonagemPK getPersonagemPK() {
-        return personagemPK;
-    }
-
-    public void setPersonagemPK(PersonagemPK personagemPK) {
-        this.personagemPK = personagemPK;
+    public void setIdPersonagem(Integer idPersonagem) {
+        this.idPersonagem = idPersonagem;
     }
 
     public String getNome() {
@@ -97,6 +93,14 @@ public class Personagem implements Serializable {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getAbreviacao() {
+        return abreviacao;
+    }
+
+    public void setAbreviacao(String abreviacao) {
+        this.abreviacao = abreviacao;
     }
 
     public int getAtaque() {
@@ -123,6 +127,22 @@ public class Personagem implements Serializable {
         this.hp = hp;
     }
 
+    public int getDistMov() {
+        return distMov;
+    }
+
+    public void setDistMov(int distMov) {
+        this.distMov = distMov;
+    }
+
+    public int getDistAtaq() {
+        return distAtaq;
+    }
+
+    public void setDistAtaq(int distAtaq) {
+        this.distAtaq = distAtaq;
+    }
+
     public String getDescricao() {
         return descricao;
     }
@@ -131,34 +151,18 @@ public class Personagem implements Serializable {
         this.descricao = descricao;
     }
 
-    public List<Tropa> getTropaList() {
-        return tropaList;
+    public List<Jogador> getJogadorList() {
+        return jogadorList;
     }
 
-    public void setTropaList(List<Tropa> tropaList) {
-        this.tropaList = tropaList;
-    }
-
-    public List<TipoAtaque> getTipoAtaqueList() {
-        return tipoAtaqueList;
-    }
-
-    public void setTipoAtaqueList(List<TipoAtaque> tipoAtaqueList) {
-        this.tipoAtaqueList = tipoAtaqueList;
-    }
-
-    public Distancia getDistancia() {
-        return distancia;
-    }
-
-    public void setDistancia(Distancia distancia) {
-        this.distancia = distancia;
+    public void setJogadorList(List<Jogador> jogadorList) {
+        this.jogadorList = jogadorList;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (personagemPK != null ? personagemPK.hashCode() : 0);
+        hash += (idPersonagem != null ? idPersonagem.hashCode() : 0);
         return hash;
     }
 
@@ -169,7 +173,7 @@ public class Personagem implements Serializable {
             return false;
         }
         Personagem other = (Personagem) object;
-        if ((this.personagemPK == null && other.personagemPK != null) || (this.personagemPK != null && !this.personagemPK.equals(other.personagemPK))) {
+        if ((this.idPersonagem == null && other.idPersonagem != null) || (this.idPersonagem != null && !this.idPersonagem.equals(other.idPersonagem))) {
             return false;
         }
         return true;
@@ -177,7 +181,7 @@ public class Personagem implements Serializable {
 
     @Override
     public String toString() {
-        return "Entidades.Personagem[ personagemPK=" + personagemPK + " ]";
+        return "Entidades.Personagem[ idPersonagem=" + idPersonagem + " ]";
     }
     
 }
