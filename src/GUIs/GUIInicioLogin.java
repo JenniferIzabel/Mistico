@@ -12,6 +12,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import javax.persistence.EntityManagerFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -64,6 +65,7 @@ public class GUIInicioLogin extends JFrame{
     
 
     public GUIInicioLogin() {
+        
         setSize(300, 300);
         setTitle("Login");
         
@@ -102,6 +104,7 @@ public class GUIInicioLogin extends JFrame{
         
         btCriarUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
+                
                 GUINovoJogador guicrudJogador = new GUINovoJogador();
             }
         });

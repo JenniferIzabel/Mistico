@@ -5,6 +5,8 @@
  */
 package GUIs;
 
+import DAOs.JogadorJpaController;
+import Entidades.Jogador;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -14,6 +16,11 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -21,6 +28,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 
@@ -48,13 +56,15 @@ public class GUINovoJogador extends JFrame {
     //oeste
     private JLabel lbUsuario = new JLabel("Usuario:");
     private JLabel lbSenha = new JLabel("Senha:");
+    private JLabel lbConfSenha = new JLabel("Confirme a senha:");
     //centro
     private JTextField tfUsuario = new JTextField();
-    private JTextField tfSenha = new JTextField();
+    private JPasswordField tfSenha = new JPasswordField();
+    private JPasswordField tfConfSenha = new JPasswordField();
     //sul
-    private JLabel lbAviso = new JLabel(".....");
+    private JLabel lbAviso = new JLabel(".");
 
-//    public GUINovoJogador(Connection connection) {
+
     public GUINovoJogador() {
 
         ///// Definições da janela /////////////////////////////////////////////////////
@@ -65,7 +75,6 @@ public class GUINovoJogador extends JFrame {
         setTitle("Novo Jogador");
 
         ///// Painel Norte /////////////////////////////////////////////////////
-        
         iconeNovo = new ImageIcon(getClass().getResource("/icones/simple-document-save.png"));
         btNovo = new JButton(iconeNovo);
         pnNorte.add(btNovo);
@@ -82,7 +91,6 @@ public class GUINovoJogador extends JFrame {
         pnOeste.setLayout(new GridLayout(6, 1));
 
         pnOeste.add(lbSenha);
-        
 
         ///// Painel Centro /////////////////////////////////////////////////////
         pnCentro.setLayout(new GridBagLayout());
@@ -92,14 +100,10 @@ public class GUINovoJogador extends JFrame {
 
         addC(lbUsuario, tfUsuario, pnCentro);
         addC(lbSenha, tfSenha, pnCentro);
-        
+        addC(lbConfSenha, tfConfSenha, pnCentro);
 
         ///// Painel Sul ///////////////////////////////////////////////////////
-
-        pnSul.setLayout(new GridLayout(1, 1));
-        pnSul.setBackground(Color.green);
         pnSul.add(lbAviso);
-
 
         ////////////////////////////////////////////////////////////////////////
         cp.add(pnNorte, BorderLayout.NORTH);
@@ -108,15 +112,53 @@ public class GUINovoJogador extends JFrame {
         cp.add(pnLeste, BorderLayout.EAST);
         cp.add(pnOeste, BorderLayout.WEST);
 
-
         ///// Botões////////////////////////////////////////////////////////////
-        
-
         btNovo.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
-                
+                if (tfSenha.getText().compareTo(tfConfSenha.getText()) != 0) {
+                    lbAviso.setText("As senhas estão diferentes!!");
+                    pnSul.setBackground(Color.RED);
+                } else if (!verificaCampos()) {
+                    lbAviso.setText("Preencha todos os campos");
+                    pnSul.setBackground(Color.red);
+                } else {
+                    pnSul.setBackground(Color.GREEN);
+
+                    int num, p = 2000;
+                    
+                    boolean aux = true; 
+                    Jogador jogador = new Jogador(tfUsuario.getText(), tfSenha.getText(), 0, 0);
+
+                    EntityManagerFactory factory = Persistence.createEntityManagerFactory("UP");
+
+                    
+                    ///encontrar id aleatorio
+                    while (aux) {
+                        num = encontraAleatorio(p);
+                        try {
+                            //tenta colocar o id gerado
+                            jogador.setIdJogador(num);
+                            aux = false;
+                        } catch (Exception f) {
+                            throw new RuntimeException(f);
+                        }
+                        p *= 10;
+                    }
+                    ///adiciona o jogador no banco
+                    
+                        System.out.println("entrou");
+                        JogadorJpaController jjc = new JogadorJpaController(factory);
+                        try {
+                            jjc.create(jogador);
+                        } catch (Exception ex) {
+                            Logger.getLogger(GUINovoJogador.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    
+                    lbAviso.setText("Inserido com sucesso");
+                    pnSul.setBackground(Color.green);
+                    btLimparCampos.doClick();
+                }
 
             }
         });
@@ -129,18 +171,16 @@ public class GUINovoJogador extends JFrame {
             }
         });
 
-        
         btLimparCampos.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 tfUsuario.setText("");
                 tfSenha.setText("");
+                tfConfSenha.setText("");
             }
         });
 
-       
         ////////////////////////////////////////////////////////////
-
         setLocationRelativeTo(null);
         setVisible(true);
 
@@ -180,4 +220,18 @@ public class GUINovoJogador extends JFrame {
         panel.add(componente, cons);
     }
 
+    private boolean verificaCampos() {
+        if (tfUsuario.getText().equals("")
+                || tfSenha.getText().equals("")
+                || tfConfSenha.getText().equals("")) {
+
+            return false;
+        }
+        return true;
+    }
+
+    private int encontraAleatorio(int p) {
+        Random gerador = new Random();
+        return gerador.nextInt(p);
+    }
 }

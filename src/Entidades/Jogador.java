@@ -58,8 +58,7 @@ public class Jogador implements Serializable {
         this.idJogador = idJogador;
     }
 
-    public Jogador(Integer idJogador, String usuario, String senha, int qtdVitorias, int qtdderrotas) {
-        this.idJogador = idJogador;
+    public Jogador(String usuario, String senha, int qtdVitorias, int qtdderrotas) {
         this.usuario = usuario;
         this.senha = senha;
         this.qtdVitorias = qtdVitorias;

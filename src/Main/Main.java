@@ -8,6 +8,10 @@ package Main;
 import GUIs.GUIInicioLogin;
 import GUIs.GUIPrincipal;
 import GUIs.Tabuleiro;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
 
 /**
  *
@@ -21,7 +25,9 @@ public class Main {
     public static void main(String[] args) {
 //        GUIPrincipal gui = new GUIPrincipal(1, 2, 12, 16);
 
-          GUIInicioLogin guiInicioLogin = new GUIInicioLogin();
+                GUIInicioLogin guiInicioLogin = new GUIInicioLogin();
+
+        
     }
-    
+
 }
