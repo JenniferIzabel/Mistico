@@ -27,12 +27,12 @@ public class GUIPrincipal extends JFrame implements Serializable {
 
     private JPanel menuLateral = new JPanel();
 
-    public GUIPrincipal(int idJog1, int idJog2, int x, int y) {
+    public GUIPrincipal(int idJog1, int idJog2) {
         this.idJog1 = idJog1;
         this.idJog2 = idJog2;
 
-        this.x = x;
-        this.y = y;
+        this.x = 16;// tamanho do tabuleiro x
+        this.y = 16;// tamanho do tabuleiro y
 
         
         

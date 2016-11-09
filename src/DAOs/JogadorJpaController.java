@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -165,6 +166,17 @@ public class JogadorJpaController implements Serializable {
         EntityManager em = getEntityManager();
         try {
             return em.find(Jogador.class, id);
+        } finally {
+            em.close();
+        }
+    }
+    
+    public Jogador findJogador(String user, String senha) {//verifica se o login e senha existem
+        EntityManager em = getEntityManager();
+        try {
+            String sql = "SELECT e FROM Jogador e WHERE e.usuario= ?1 ";
+            TypedQuery<Jogador> q = em.createQuery("SELECT e FROM Jogador e WHERE e.usuario= ?1 ", Jogador.class);
+            return q.setParameter(1, user).getSingleResult();
         } finally {
             em.close();
         }
