@@ -6,7 +6,7 @@
 package Main;
 
 import GUIs.GUIInicioLogin;
-import GUIs.GUIPrincipal;
+import GUIs.GUIJogo;
 import GUIs.Tabuleiro;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -23,7 +23,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-//        GUIPrincipal gui = new GUIPrincipal(1, 2, 12, 16);
+//        GUIJogo gui = new GUIJogo(1, 2, 12, 16);
 
                 GUIInicioLogin guiInicioLogin = new GUIInicioLogin();
 

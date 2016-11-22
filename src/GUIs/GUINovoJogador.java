@@ -79,9 +79,9 @@ public class GUINovoJogador extends JFrame {
         btNovo = new JButton(iconeNovo);
         pnNorte.add(btNovo);
 
-        iconeExcluir = new ImageIcon(getClass().getResource("/icones/simple-cancel.png"));
-        btExcluir = new JButton(iconeExcluir);
-        pnNorte.add(btExcluir);
+//        iconeExcluir = new ImageIcon(getClass().getResource("/icones/simple-cancel.png"));
+//        btExcluir = new JButton(iconeExcluir);
+//        pnNorte.add(btExcluir);
 
         iconeLimparCampos = new ImageIcon(getClass().getResource("/icones/simple-edit-clear-all.png"));
         btLimparCampos = new JButton(iconeLimparCampos);
@@ -163,13 +163,13 @@ public class GUINovoJogador extends JFrame {
             }
         });
 
-        btExcluir.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                btLimparCampos.doClick();
-            }
-        });
+//        btExcluir.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//
+//                btLimparCampos.doClick();
+//            }
+//        });
 
         btLimparCampos.addActionListener(new ActionListener() {
             @Override

@@ -181,7 +181,11 @@ public class Personagem implements Serializable {
 
     @Override
     public String toString() {
-        return "Entidades.Personagem[ idPersonagem=" + idPersonagem + " ]";
+        return abreviacao+" - "+nome+" (HP: "+hp+", ATK: "+ataque+", DEF: "+defesa+")";
+    }
+    
+    public String descricao() {
+        return abreviacao+" - "+nome+"\nHP: "+hp+"\nATK: "+ataque+"\nDEF: "+defesa+"\n\n"+descricao;
     }
     
 }

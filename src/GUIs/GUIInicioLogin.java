@@ -40,7 +40,7 @@ public class GUIInicioLogin extends JFrame {
     private JPanel pnCentro = new JPanel();
 
     //NORTE
-    private JLabel lbTitulo = new JLabel("MÍSTICO");
+    private JLabel lbTitulo = new JLabel("MÍSTICO ");
 
     //CENTRO
     private JLabel lbJogadorA = new JLabel("JOGADOR A");
@@ -94,25 +94,30 @@ public class GUIInicioLogin extends JFrame {
         addC(lbSenha2, tfSenha2, pnCentro);
         addC(btCriarUsuario, btOk, pnCentro);
 
+        getRootPane().setDefaultButton(btOk);//pressiona o bptão com o enter
         btOk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
 
-                if ((!tfJogador1.getText().equals(tfJogador2.getText()))) {
+                if (!tfJogador1.getText().equals(tfJogador2.getText())) {
                     try {
                         EntityManagerFactory factory = Persistence.createEntityManagerFactory("UP");
                         JogadorJpaController jjc = new JogadorJpaController(factory);
 
-                        Jogador jog1 = jjc.findJogador(tfJogador1.getText(), tfSenha1.getText());
+                        Jogador jog1 = jjc.findJogadorLogin(tfJogador1.getText(), tfSenha1.getText());
 
-                        Jogador jog2 = jjc.findJogador(tfJogador2.getText(), tfSenha2.getText());
+                        Jogador jog2 = jjc.findJogadorLogin(tfJogador2.getText(), tfSenha2.getText());
+                        try {
+                            GUISelecionaPersonagens guiSelecionaPersonagens = new GUISelecionaPersonagens(jog1.getIdJogador(), jog2.getIdJogador());
 
-                        GUIPrincipal guiPrincipal = new GUIPrincipal(jog1.getIdJogador(), jog2.getIdJogador());
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(null, "Erro no jogo. Tente mais tarde");
+                        }
+//                        GUIPrincipal principal = new GUIPrincipal(jog1.getIdJogador(), jog2.getIdJogador());
                         dispose();
 
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(null, "Login ou senha incorretos!!");
                     }
-
                 } else {
                     JOptionPane.showMessageDialog(null, "Usuários precisam ser diferentes!!");
                 }
@@ -125,7 +130,6 @@ public class GUIInicioLogin extends JFrame {
                 GUINovoJogador guicrudJogador = new GUINovoJogador();
             }
         });
-
         cp.add(pnNorte, BorderLayout.NORTH);
         cp.add(pnCentro, BorderLayout.CENTER);
 

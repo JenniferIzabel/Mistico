@@ -171,12 +171,13 @@ public class JogadorJpaController implements Serializable {
         }
     }
     
-    public Jogador findJogador(String user, String senha) {//verifica se o login e senha existem
+    public Jogador findJogadorLogin(String user, String senha) {//verifica se o login e senha existem
         EntityManager em = getEntityManager();
         try {
-            String sql = "SELECT e FROM Jogador e WHERE e.usuario= ?1 ";
-            TypedQuery<Jogador> q = em.createQuery("SELECT e FROM Jogador e WHERE e.usuario= ?1 ", Jogador.class);
-            return q.setParameter(1, user).getSingleResult();
+            TypedQuery<Jogador> q = em.createQuery("SELECT e FROM Jogador e WHERE e.usuario = ?1 AND e.senha = ?2", Jogador.class);
+             q.setParameter(1, user);
+             q.setParameter(2, senha);
+             return q.getSingleResult();
         } finally {
             em.close();
         }
